@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "5000:5000"
+    networks:
+      - taskflow
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  task-service:
+    build: ./task-service
+    image: task-service:latest
+    container_name: task-service
+    ports:
+      - "5001:5001"
+    networks:
+      - taskflow
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  user-service:
+    build: ./user-service
+    image: user-service:latest
+    container_name: user-service
+    ports:
+      - "5002:5002"
+    networks:
+      - taskflow
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  notification-service:
+    build: ./notification-service
+    image: notification-service:latest
+    container_name: notification-service
+    ports:
+      - "5003:5003"
+    networks:
+      - taskflow
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  taskflow:
+    driver: bridge
