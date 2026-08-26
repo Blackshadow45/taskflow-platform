@@ -1,5 +1,5 @@
-*.tar 
-*.pem 
-.env 
+*.tar
+*.pem
+.env
 __pycache__/
-node_modules/ 
+node_modules/
