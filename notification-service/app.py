@@ -1,35 +1,38 @@
 from flask import Flask, request, jsonify
 from datetime import datetime, timezone
+
 app = Flask(__name__)
+
 notifications = []
+
 @app.route('/health')
 def health():
-return jsonify(status='healthy', service='notification-service',
-timestamp=datetime.now(timezone.utc).isoformat()), 200
+    return jsonify(
+        status='healthy',
+        service='notification-service',
+        timestamp=datetime.now(timezone.utc).isoformat()
+    ), 200
+
 @app.route('/notify', methods=['POST'])
 def send_notification():
-data = request.json or {}
-n = {
-'id': len(notifications) + 1,
-'recipient': data.get('recipient'),
-'message': data.get('message'),
-'type': data.get('type', 'info'),
-'sent_at': datetime.now(timezone.utc).isoformat(),
-'status': 'sent'
-}
-notifications.append(n)
-return jsonify(n), 201
+    data = request.json or {}
+    n = {
+        'id': len(notifications) + 1,
+        'recipient': data.get('recipient'),
+        'message': data.get('message'),
+        'type': data.get('type', 'info'),
+        'sent_at': datetime.now(timezone.utc).isoformat(),
+        'status': 'sent'
+    }
+    notifications.append(n)
+    return jsonify(n), 201
+
 @app.route('/notifications')
 def get_notifications():
-return jsonify(count=len(notifications), notifications=notifications), 200
+    return jsonify(
+        count=len(notifications),
+        notifications=notifications
+    ), 200
+
 if __name__ == '__main__':
-app.run(host='0.0.0.0', port=5003)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY app.py .
-RUN useradd -r -u 1001 appuser
-USER 1001
-EXPOSE 5002
-HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
-CMD curl -fsS http://localhost:5002/health || exit 1
-CMD ["gunicorn", "--bind", "0.0.0.0:5002", "--workers", "2", "app:app"]
+    app.run(host='0.0.0.0', port=5003)
