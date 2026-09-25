@@ -37,7 +37,7 @@ def health():
 
 @app.route('/version')
 def version():
-    return jsonify(version=os.getenv('APP_VERSION', '1.0.0')), 200
+    return jsonify(version=os.getenv('APP_VERSION', '2.0.0')), 200
 
 @app.route('/metrics')
 def metrics():
